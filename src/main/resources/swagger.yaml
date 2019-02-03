@@ -1,0 +1,165 @@
+swagger: "2.0"
+info:
+  description: "Customer Profiles API"
+  version: "1.0.0"
+  title: "Customer Profiles API"
+  contact:
+    email: "diego.romoli@intelligentpathways.com.au"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "customer-api.swagger.io"
+basePath: "/v2"
+securityDefinitions:
+  basicAuth:
+    type: basic
+# To apply Basic auth to the whole API:
+security:
+  - basicAuth: []
+tags:
+- name: "profile"
+  description: "Operations on customer profiles"
+schemes:
+- "https"
+paths:
+  /profile:
+    get:
+        tags:
+        - "profile"
+        summary: "Retrieves customer profile"
+        description: "Retrieves logged-in customer profile"
+        operationId: "getProfile"
+        produces:
+        - "application/xml"
+        - "application/json"
+        responses:
+          200:
+            description: "successful operation"
+            schema:
+              $ref: "#/definitions/Customer"
+          400:
+            description: "Invalid request"
+          401:
+            $ref: "#/responses/UnauthorizedError"
+          404:
+            description: "Customer not found"
+    post:
+      tags:
+      - "profile"
+      summary: "Add a new customer profile"
+      description: ""
+      operationId: "addProfile"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Customer object that needs to be added"
+        required: true
+        schema:
+          $ref: "#/definitions/Customer"
+      responses:
+        401:
+            $ref: "#/responses/UnauthorizedError"
+        405:
+          description: "Invalid input"
+    put:
+      tags:
+      - "profile"
+      summary: "Update an existing customer profile"
+      description: ""
+      operationId: "updateProfile"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Customer object that needs to be updated"
+        required: true
+        schema:
+          $ref: "#/definitions/Customer"
+      responses:
+        400:
+          description: "Validation exception"
+        401:
+            $ref: "#/responses/UnauthorizedError"
+        404:
+          description: "Customer not found"
+    delete:
+      tags:
+      - "profile"
+      summary: "Deletes a customer profile"
+      description: ""
+      operationId: "deleteProfile"
+      produces:
+      - "application/xml"
+      - "application/json"
+      responses:
+        401:
+            $ref: "#/responses/UnauthorizedError"
+        404:
+          description: "Customer not found"
+responses:
+  UnauthorizedError:
+    description: Invalid authentication
+    headers:
+      WWW_Authenticate:
+        type: string
+definitions:
+  Address:
+    type: "object"
+    properties:
+      address1:
+        type: "string"
+      address2:
+        type: "string"
+      email:
+        type: "string"
+      addressType:
+        type: "string"
+        enum: [home, office]
+  Customer:
+    type: "object"
+    required:
+    - "firstName"
+    - "lastName"
+    - "dateOfBirth"
+    properties:
+      id:
+        type: "string"
+      firstName:
+        type: "string"
+        example: "John"
+      lastName:
+        type: "string"
+        example: "Smith"
+      dateOfBirth:
+        type: "string"
+        format: "date"
+      addresses:
+        type: "array"
+        xml:
+          name: "address"
+          wrapped: true
+        items:
+          $ref: "#/definitions/Address"
+    xml:
+      name: "Customer"
+  ApiResponse:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      type:
+        type: "string"
+      message:
+        type: "string"
