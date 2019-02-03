@@ -1,4 +1,4 @@
-# customer-api
+# Customer API
 
 ## Design
 
