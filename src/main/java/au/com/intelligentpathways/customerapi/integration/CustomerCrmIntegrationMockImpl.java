@@ -15,9 +15,9 @@ public class CustomerCrmIntegrationMockImpl implements CustomerCrmIntegration {
     @PostConstruct
     public void initialize() {
         customers = new HashMap<String, Customer>() {{
-            put("customer1", CustomerMockBuilder.getCustomerWithId("customer1"));
-            put("customer2", CustomerMockBuilder.getCustomerWithId("customer2"));
-            put("customer3", CustomerMockBuilder.getCustomerWithId("customer3"));
+//            put("customer1", CustomerMockBuilder.getCustomerWithId("customer1"));
+//            put("customer2", CustomerMockBuilder.getCustomerWithId("customer2"));
+//            put("customer3", CustomerMockBuilder.getCustomerWithId("customer3"));
             put("customer4", CustomerMockBuilder.getCustomerWithId("customer4"));
         }};
     }

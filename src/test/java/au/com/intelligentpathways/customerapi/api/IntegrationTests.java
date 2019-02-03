@@ -35,6 +35,8 @@ public class IntegrationTests {
     private static final String URI = "/profile";
     private static final String CUSTOMER_1 = "customer1";
     private static final String PASSWORD_1 = "password1";
+    private static final String CUSTOMER_4 = "customer4";
+    private static final String PASSWORD_4 = "password4";
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -51,7 +53,7 @@ public class IntegrationTests {
     }
 
     @Test
-    public void testGetBadCredentials() {
+    public void testGetProfileWithBadCredentials() {
         try {
             mvc.perform(MockMvcRequestBuilders.get(URI)
                     .with(httpBasic(CUSTOMER_1, "wrong-password"))
@@ -65,38 +67,38 @@ public class IntegrationTests {
     }
 
     @Test
-    public void testGet() {
+    public void testGetProfile() {
         try {
             MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(URI)
-                    .with(httpBasic(CUSTOMER_1, PASSWORD_1))
+                    .with(httpBasic(CUSTOMER_4, PASSWORD_4))
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
                     .andReturn();
-            assertTrue(mvcResult.getResponse().getContentAsString().contains("\"id\":\"customer1\""));
+            assertTrue(mvcResult.getResponse().getContentAsString().contains("\"id\":\"customer4\""));
         } catch (Exception e) {
             assertTrue(e.getCause() instanceof AccessDeniedException);
         }
     }
 
     @Test
-    public void testUpdate() {
+    public void testUpdateProfile() {
         try {
             // Get original profile
             MvcResult initialMvcResult = mvc.perform(MockMvcRequestBuilders.get(URI)
-                    .with(httpBasic(CUSTOMER_1, PASSWORD_1))
+                    .with(httpBasic(CUSTOMER_4, PASSWORD_4))
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
                     .andReturn();
-            assertTrue(initialMvcResult.getResponse().getContentAsString().contains("\"id\":\"customer1\""));
+            assertTrue(initialMvcResult.getResponse().getContentAsString().contains("\"id\":\"customer4\""));
 
             // Update profile
-            Customer modifiedCustomer1 = CustomerMockBuilder.getCustomerWithId(CUSTOMER_1);
-            modifiedCustomer1.setLastName("modified-last-name");
+            Customer modifiedCustomer4 = CustomerMockBuilder.getCustomerWithId(CUSTOMER_4);
+            modifiedCustomer4.setLastName("modified-last-name");
             mvc.perform(MockMvcRequestBuilders.put(URI)
-                    .with(httpBasic(CUSTOMER_1, PASSWORD_1))
-                    .content(objectMapper.writeValueAsBytes(modifiedCustomer1))
+                    .with(httpBasic(CUSTOMER_4, PASSWORD_4))
+                    .content(objectMapper.writeValueAsBytes(modifiedCustomer4))
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
@@ -104,7 +106,7 @@ public class IntegrationTests {
 
             // Get updated profile
             MvcResult finalMvcResult = mvc.perform(MockMvcRequestBuilders.get(URI)
-                    .with(httpBasic(CUSTOMER_1, PASSWORD_1))
+                    .with(httpBasic(CUSTOMER_4, PASSWORD_4))
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
@@ -117,25 +119,25 @@ public class IntegrationTests {
     }
 
     @Test
-    public void testUpdateWrongCustomerId() {
+    public void testUpdateProfileWithWrongCustomerId() {
         try {
             // Get original profile
             MvcResult initialMvcResult = mvc.perform(MockMvcRequestBuilders.get(URI)
-                    .with(httpBasic(CUSTOMER_1, PASSWORD_1))
+                    .with(httpBasic(CUSTOMER_4, PASSWORD_4))
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
                     .andReturn();
             assertTrue(initialMvcResult.getResponse().getContentAsString().contains("\"lastName\":\"lastName" +
-                    "-customer1\""));
+                    "-customer4\""));
 
             // Update profile
-            Customer modifiedCustomer1 = CustomerMockBuilder.getCustomerWithId(CUSTOMER_1);
-            modifiedCustomer1.setLastName("modified-last-name");
-            modifiedCustomer1.setId("a-different-customer");
+            Customer modifiedCustomer4 = CustomerMockBuilder.getCustomerWithId(CUSTOMER_4);
+            modifiedCustomer4.setLastName("modified-last-name");
+            modifiedCustomer4.setId("a-different-customer");
             mvc.perform(MockMvcRequestBuilders.put(URI)
-                    .with(httpBasic(CUSTOMER_1, PASSWORD_1))
-                    .content(objectMapper.writeValueAsBytes(modifiedCustomer1))
+                    .with(httpBasic(CUSTOMER_4, PASSWORD_4))
+                    .content(objectMapper.writeValueAsBytes(modifiedCustomer4))
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
@@ -143,12 +145,12 @@ public class IntegrationTests {
 
             // Get unmodified profile
             MvcResult finalMvcResult = mvc.perform(MockMvcRequestBuilders.get(URI)
-                    .with(httpBasic(CUSTOMER_1, PASSWORD_1))
+                    .with(httpBasic(CUSTOMER_4, PASSWORD_4))
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
                     .andReturn();
-            assertTrue(finalMvcResult.getResponse().getContentAsString().contains("\"lastName\":\"lastName-customer1" +
+            assertTrue(finalMvcResult.getResponse().getContentAsString().contains("\"lastName\":\"lastName-customer4" +
                     "\""));
         } catch (Exception e) {
             assertTrue(e.getCause() instanceof AccessDeniedException);
@@ -156,20 +158,20 @@ public class IntegrationTests {
     }
 
     @Test
-    public void testDelete() {
+    public void testDeleteProfile() {
         try {
             // Get original profile
             MvcResult initialMvcResult = mvc.perform(MockMvcRequestBuilders.get(URI)
-                    .with(httpBasic(CUSTOMER_1, PASSWORD_1))
+                    .with(httpBasic(CUSTOMER_4, PASSWORD_4))
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
                     .andReturn();
-            assertTrue(initialMvcResult.getResponse().getContentAsString().contains("\"id\":\"customer1\""));
+            assertTrue(initialMvcResult.getResponse().getContentAsString().contains("\"id\":\"customer4\""));
 
             // Delete profile
             mvc.perform(MockMvcRequestBuilders.delete(URI)
-                    .with(httpBasic(CUSTOMER_1, PASSWORD_1))
+                    .with(httpBasic(CUSTOMER_4, PASSWORD_4))
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
@@ -177,10 +179,88 @@ public class IntegrationTests {
 
             // Verify profile does not exist
             mvc.perform(MockMvcRequestBuilders.get(URI)
+                    .with(httpBasic(CUSTOMER_4, PASSWORD_4))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound())
+                    .andReturn();
+        } catch (Exception e) {
+            assertTrue(e.getCause() instanceof AccessDeniedException);
+        }
+    }
+
+    @Test
+    public void testAddProfile() {
+        try {
+            // Verify that customer profile does not exist
+            mvc.perform(MockMvcRequestBuilders.get(URI)
                     .with(httpBasic(CUSTOMER_1, PASSWORD_1))
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNotFound())
+                    .andReturn();
+
+            // Create customer profile
+            Customer customer = CustomerMockBuilder.getCustomerWithId(CUSTOMER_1);
+            MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post(URI)
+                    .with(httpBasic(CUSTOMER_1, PASSWORD_1))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsBytes(customer))
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andReturn();
+            LoggerFactory.getLogger(IntegrationTests.class).info("Returned customer from addProfile: {}", mvcResult.getResponse().getContentAsString());
+
+            // Verify that customer profile does exist
+            mvcResult = mvc.perform(MockMvcRequestBuilders.get(URI)
+                    .with(httpBasic(CUSTOMER_1, PASSWORD_1))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andReturn();
+            assertTrue(mvcResult.getResponse().getContentAsString().contains("\"id\":\"customer1\""));
+        } catch (Exception e) {
+            assertTrue(e.getCause() instanceof AccessDeniedException);
+        }
+    }
+
+    @Test
+    public void testAddExistingProfile() {
+        try {
+            // Verify that customer profile does not exist
+            mvc.perform(MockMvcRequestBuilders.get(URI)
+                    .with(httpBasic(CUSTOMER_1, PASSWORD_1))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound())
+                    .andReturn();
+
+            // Create customer profile
+            Customer customer = CustomerMockBuilder.getCustomerWithId(CUSTOMER_1);
+            mvc.perform(MockMvcRequestBuilders.post(URI)
+                    .with(httpBasic(CUSTOMER_1, PASSWORD_1))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsBytes(customer))
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andReturn();
+
+            // Verify that customer profile does exist
+            MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(URI)
+                    .with(httpBasic(CUSTOMER_1, PASSWORD_1))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andReturn();
+            assertTrue(mvcResult.getResponse().getContentAsString().contains("\"id\":\"customer1\""));
+
+            // Try to create existing profile again
+            mvc.perform(MockMvcRequestBuilders.post(URI)
+                    .with(httpBasic(CUSTOMER_1, PASSWORD_1))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsBytes(customer))
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isBadRequest())
                     .andReturn();
         } catch (Exception e) {
             assertTrue(e.getCause() instanceof AccessDeniedException);

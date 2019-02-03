@@ -24,7 +24,7 @@ import javax.validation.Valid;
 @Api(value = "profile", description = "the profile API")
 public interface ProfileApi {
 
-    @ApiOperation(value = "Add a new customer profile", nickname = "addProfile", notes = "", authorizations = {
+    @ApiOperation(value = "Add a new customer profile", nickname = "createProfile", notes = "", authorizations = {
         @Authorization(value = "basicAuth")
     }, tags={ "profile", })
     @ApiResponses(value = { 

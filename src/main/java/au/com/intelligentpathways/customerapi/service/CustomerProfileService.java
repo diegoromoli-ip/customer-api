@@ -1,11 +1,13 @@
 package au.com.intelligentpathways.customerapi.service;
 
+import au.com.intelligentpathways.customerapi.api.ApiException;
 import au.com.intelligentpathways.customerapi.api.NotFoundException;
+import au.com.intelligentpathways.customerapi.config.ExistingCustomerException;
 import au.com.intelligentpathways.customerapi.model.Customer;
 
 public interface CustomerProfileService {
 
-    void addProfile(Customer customer);
+    void createProfile(String username, Customer customer) throws ExistingCustomerException;
 
     void deleteProfile(String customerId) throws NotFoundException;
 

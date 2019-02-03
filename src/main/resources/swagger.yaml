@@ -48,7 +48,7 @@ paths:
       - "profile"
       summary: "Add a new customer profile"
       description: ""
-      operationId: "addProfile"
+      operationId: "createProfile"
       consumes:
       - "application/json"
       - "application/xml"

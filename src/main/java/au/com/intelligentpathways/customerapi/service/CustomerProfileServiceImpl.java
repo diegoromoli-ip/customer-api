@@ -1,6 +1,8 @@
 package au.com.intelligentpathways.customerapi.service;
 
+import au.com.intelligentpathways.customerapi.api.ApiException;
 import au.com.intelligentpathways.customerapi.api.NotFoundException;
+import au.com.intelligentpathways.customerapi.config.ExistingCustomerException;
 import au.com.intelligentpathways.customerapi.integration.CustomerCrmIntegration;
 import au.com.intelligentpathways.customerapi.model.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,16 @@ public class CustomerProfileServiceImpl implements CustomerProfileService {
     }
 
     @Override
-    public void addProfile(Customer customer) {
+    public void createProfile(String username, Customer customer) throws ExistingCustomerException {
+        try {
+            Customer existingProfile = getProfile(username);
+            if (existingProfile != null) {
+                throw new ExistingCustomerException(400, "Customer profile already exists");
+            }
+        } catch (NotFoundException e) {
+            // do nothing
+        }
+        customer.setId(username);
         customerCrmIntegration.addProfile(customer);
     }
 
