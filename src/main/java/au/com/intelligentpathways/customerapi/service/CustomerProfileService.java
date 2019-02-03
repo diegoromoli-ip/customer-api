@@ -1,6 +1,5 @@
 package au.com.intelligentpathways.customerapi.service;
 
-import au.com.intelligentpathways.customerapi.api.ApiException;
 import au.com.intelligentpathways.customerapi.api.NotFoundException;
 import au.com.intelligentpathways.customerapi.config.ExistingCustomerException;
 import au.com.intelligentpathways.customerapi.model.Customer;
